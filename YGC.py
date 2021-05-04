@@ -10,7 +10,7 @@ import random
 
 # Network Information
 PORTS_NEEDED = 2
-START_PORT = 10092
+START_PORT = 12024
 STOP = "STOP"
 HOST = "127.0.0.1"
 
@@ -64,7 +64,6 @@ class YGC_Circuit_Generator:
         self.node.send_messages({(self.partner_host, self.partner_port): message1})
 
         # Runs the OT protocols
-        i = 0
         while True:
             message2 = self.node.get_message_at(self.round_num)
             self.round_num += 1
@@ -170,28 +169,36 @@ class YGC_Circuit_Evaluator:
 
             # Finds the correct index in the garbled table
             concated_wire_labels = ""
-            # reverse_concated_wire_labels = ""
+            reverse_concated_wire_labels = ""
             garbled_table_index = ""
-            # reverse_garbled_table_index = ""
+            reverse_garbled_table_index = ""
             for ipt in gate_inputs:
                 concated_wire_labels += str(ipt[0])
-                # reverse_concated_wire_labels = str(ipt[0])+reverse_concated_wire_labels
+                reverse_concated_wire_labels = str(ipt[0])+reverse_concated_wire_labels
                 garbled_table_index += str(ipt[1])
-                # reverse_garbled_table_index = str(ipt[1])+reverse_garbled_table_index
+                reverse_garbled_table_index = str(ipt[1])+reverse_garbled_table_index
             concated_wire_labels += gate_num_str
-            garbled_table_index = int(garbled_table_index, 2)
-            # reverse_concated_wire_labels += gate_num_str
-            # reverse_garbled_table_index = int(reverse_garbled_table_index, 2)
+            try:
+                garbled_table_index = int(garbled_table_index, 2)
+            except:
+                print()
+            reverse_concated_wire_labels += gate_num_str
+            reverse_garbled_table_index = int(reverse_garbled_table_index, 2)
 
-            output = int.from_bytes(Utilities.hash(concated_wire_labels), byteorder="little", signed=False) ^ \
+
+
+            try:
+                output = int.from_bytes(Utilities.hash(concated_wire_labels), byteorder="little", signed=False) ^ \
                      garbled_table[gate_num_int][garbled_table_index]
+            except:
+                print()
             output = bin(output)[2:]
             output = ("0"*(Wire.K+1-len(output)))+output
 
-            # r_output = int.from_bytes(Utilities.hash(reverse_concated_wire_labels), byteorder="little", signed=False) ^ \
-            #          garbled_table[gate_num_int][reverse_garbled_table_index]
-            # r_output = bin(r_output)[2:]
-            # r_output = ("0" * (Wire.K + 1 - len(output))) + r_output
+            r_output = int.from_bytes(Utilities.hash(reverse_concated_wire_labels), byteorder="little", signed=False) ^ \
+                     garbled_table[gate_num_int][reverse_garbled_table_index]
+            r_output = bin(r_output)[2:]
+            r_output = ("0" * (Wire.K + 1 - len(output))) + r_output
 
             wire_label = output[:-1]
             wire_activation = int(output[-1])
@@ -218,14 +225,14 @@ class YGC_Circuit_Evaluator:
         return outputs
 
 
-def initialize_YGC(party_num, prime, generator, uniform1, uniform2):
+def initialize_adder(party_num, prime, generator, uniform1, uniform2, inputs):
+
+    inputs_copy = copy.copy(inputs)
 
     # The Circuit generator
     if party_num == 0:
+        inputs = {0: inputs[0], 2: inputs[2]}
         wires = [Wire.Wire() for _ in range(8)]
-        inputs = {0: random.randint(0, 1), 2: random.randint(0, 1)}
-        for key in inputs.keys():
-            print("W%d: %d" % (key, inputs[key]))
         gates = [Gate.Gate("000", Gate.XOR(), [wires[0], wires[1]], wires[3]),
                  Gate.Gate("001", Gate.XOR(), [wires[2], wires[3]], wires[4], True),
                  Gate.Gate("010", Gate.AND(), [wires[2], wires[3]], wires[5]),
@@ -235,22 +242,74 @@ def initialize_YGC(party_num, prime, generator, uniform1, uniform2):
         ygc = YGC_Circuit_Generator(HOST, START_PORT, HOST, START_PORT+PORTS_NEEDED, circuit, prime,
                                     generator, uniform1, uniform2)
         result = ygc.result
-        print("S: "+str(result["001"]))
-        print("C: "+str(result["100"]))
+        results = str(result["100"])+str(result["001"])
+
+        result = ""
+        i_keys = list(inputs_copy.keys())
+        i_keys.sort()
+        for ipt in i_keys:
+            result += str(inputs_copy[i_keys[ipt]])
+
+        result += ": "+results
+        print(result)
+
+
+    else:
+        inputs = {1: inputs[1]}
+        ygc = YGC_Circuit_Evaluator(HOST, START_PORT + PORTS_NEEDED, HOST, START_PORT, inputs,
+                                    prime, generator, uniform1, uniform2)
+
+
+def initialize_comparator(party_num, prime, generator, uniform1, uniform2, inputs):
+
+    bits = 2
+
+    # The Circuit generator
+    if party_num == 0:
+
+        inputs_copy = copy.copy(inputs)
+
+        # The comparator
+        wires = [Wire.Wire() for _ in range(11)]
+        inputs = {2 * i: inputs[2*i] for i in range(bits)}
+
+        gates = [Gate.Gate("000", Gate.XOR(), [wires[0], wires[1]], wires[4]),
+                 Gate.Gate("001", Gate.NOT(), [wires[4]], wires[5]),
+                 Gate.Gate("010", Gate.AND(), [wires[0], wires[4]], wires[6]),
+                 Gate.Gate("011", Gate.XOR(), [wires[2], wires[3]], wires[7]),
+                 Gate.Gate("100", Gate.AND(), [wires[5], wires[7]], wires[8]),
+                 Gate.Gate("101", Gate.AND(), [wires[2], wires[8]], wires[9]),
+                 Gate.Gate("110", Gate.OR(), [wires[6], wires[9]], wires[10], True)]
+        circuit = Circuit.Circuit(inputs, gates, wires)
+        # circuit.print_circuit()
+        ygc = YGC_Circuit_Generator(HOST, START_PORT, HOST, START_PORT + PORTS_NEEDED, circuit, prime,
+                                    generator, uniform1, uniform2)
+
+        result = ""
+        i_keys = list(inputs_copy.keys())
+        i_keys.sort()
+        for ipt in i_keys:
+            result += str(inputs_copy[i_keys[ipt]])
+        try:
+            result += ": "+str(ygc.result["110"])
+        except:
+            print()
+        print(result)
 
     # The Circuit evaluator
     else:
-        inputs = {1: random.randint(0, 1)}
-        for key in inputs.keys():
-            print("W%d: %d" % (key, inputs[key]))
+        # The comparator
+        inputs = {2*i+1: inputs[2*i+1] for i in range(bits)}
         ygc = YGC_Circuit_Evaluator(HOST, START_PORT+PORTS_NEEDED, HOST, START_PORT, inputs,
                                     prime, generator, uniform1, uniform2)
-        # result = ygc.result
-        # print("S: " + str(result["001"]))
-        # print("C: " + str(result["100"]))
+
+
 
 
 def main():
+
+    random.seed(0)
+
     prime = 2903
     generator = 5
     uniform1 = random.randint(1, 2903)
@@ -260,16 +319,42 @@ def main():
 
     manager = multiprocessing.Manager()
 
-    # Starts the YGC processes
-    processes = list()
-    for party_num in range(2):
-        processes.append(multiprocessing.Process(target=initialize_YGC, args=(party_num, prime, generator, uniform1,
-                                                                              uniform2)))
-        processes[-1].start()
+    # Starts the YGC adder processes
+    print("ADDER:")
+    for ipt in range(2**3):
 
-    # Joins the the processes back to the main process to terminate
-    for process in processes:
-        process.join()
+        inputs_str = bin(ipt)[2:]
+        inputs_str = ("0"*(3-len(inputs_str)))+inputs_str
+        inputs = {i: int(inputs_str[i]) for i in range(3)}
+
+        processes = list()
+        for party_num in range(2):
+            processes.append(multiprocessing.Process(target=initialize_adder, args=(party_num, prime, generator, uniform1,
+                                                                                  uniform2, inputs)))
+            processes[-1].start()
+
+        # Joins the the processes back to the main process to terminate
+        for process in processes:
+            process.join()
+
+    print("\n\nCOMPARATOR:")
+    # Starts the YGC adder processes
+    for ipt in range(2**4):
+
+        inputs_str = bin(ipt)[2:]
+        inputs_str = ("0" * (4 - len(inputs_str))) + inputs_str
+        inputs = {i: int(inputs_str[i]) for i in range(4)}
+
+        processes = list()
+        for party_num in range(2):
+            processes.append(
+                multiprocessing.Process(target=initialize_comparator, args=(party_num, prime, generator, uniform1,
+                                                                       uniform2, inputs)))
+            processes[-1].start()
+
+        # Joins the the processes back to the main process to terminate
+        for process in processes:
+            process.join()
 
 if __name__ == '__main__':
     main()

@@ -6,6 +6,10 @@ import nacl.hash
 ENCODING = nacl.encoding.RawEncoder()
 
 
+def to_bin_of_size(x, n):
+    bin_x = bin(x)[2:]
+    return ("0"*(n-len(bin_x)))+bin_x
+
 def square_multiply(b, p, n):
     """
     Does b^p (mod n) efficiently
