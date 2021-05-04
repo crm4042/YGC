@@ -7,7 +7,18 @@ import time
 import threading
 
 
+"""
+Author: Chris Murphy
+"""
+
+
 class Node:
+
+	"""
+	Represents a node of communication for point-to-point
+	communication between parties
+	"""
+
 	def __init__(self, host, port):
 		
 		"""

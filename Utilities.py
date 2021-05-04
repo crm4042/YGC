@@ -5,6 +5,10 @@ import nacl.hash
 
 ENCODING = nacl.encoding.RawEncoder()
 
+"""
+Author: Chris Murphy
+"""
+
 
 def to_bin_of_size(x, n):
 

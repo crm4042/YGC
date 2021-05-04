@@ -3,8 +3,16 @@ import Utilities
 import Wire
 import random
 
+"""
+Author: Chris Murphy
+"""
 
 class Circuit:
+
+    """
+    Represents a full circuit.
+    """
+
     def __init__(self, inputs: dict, gates: list, wires: list):
 
         """

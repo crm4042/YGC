@@ -16,6 +16,10 @@ PORT = 10124
 ENCODER = nacl.encoding.RawEncoder()
 
 
+"""
+Author: Chris Murphy
+"""
+
 class OT_Sender:
 
     """

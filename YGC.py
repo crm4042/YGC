@@ -15,6 +15,11 @@ STOP = "STOP"
 HOST = "127.0.0.1"
 
 
+"""
+Author: Chris Murphy
+"""
+
+
 class YGC_Circuit_Generator:
 
     """

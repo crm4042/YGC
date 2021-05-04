@@ -4,6 +4,10 @@ import random
 K = 100
 
 
+"""
+Author: Chris Murphy
+"""
+
 class Wire:
 
     """
