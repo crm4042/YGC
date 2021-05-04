@@ -4,7 +4,7 @@ import Wire
 import random
 
 """
-Author: Chris Murphy
+Author: Chris Murphy (crm4042@g.rit.edu)
 """
 
 class Circuit:

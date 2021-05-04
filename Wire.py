@@ -5,7 +5,7 @@ K = 100
 
 
 """
-Author: Chris Murphy
+Author: Chris Murphy (crm4042@g.rit.edu)
 """
 
 class Wire:

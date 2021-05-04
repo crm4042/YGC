@@ -6,7 +6,7 @@ import nacl.hash
 ENCODING = nacl.encoding.RawEncoder()
 
 """
-Author: Chris Murphy
+Author: Chris Murphy (crm4042@g.rit.edu)
 """
 
 

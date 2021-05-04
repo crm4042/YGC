@@ -16,7 +16,7 @@ HOST = "127.0.0.1"
 
 
 """
-Author: Chris Murphy
+Author: Chris Murphy (crm4042@g.rit.edu)
 """
 
 
