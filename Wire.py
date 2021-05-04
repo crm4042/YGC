@@ -5,7 +5,17 @@ K = 100
 
 
 class Wire:
+
+    """
+    Represents a single wire on the circuit.
+    """
+
     def __init__(self):
+
+        """
+        Initializes a wire with k and p values
+        """
+
         self.k = [bin(random.getrandbits(K))[2:], bin(random.getrandbits(K))[2:]]
         for b in range(2):
             self.k[b] = ("0"*(K-len(self.k[b])))+self.k[b]

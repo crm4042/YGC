@@ -6,8 +6,25 @@ OUT = "011011110111010101110100"
 
 
 class Gate:
+
+    """
+    Corresponds to a single gate in a circuit.
+    """
+
     def __init__(self, gate_num_str: str, gate: dict, inputs: list, output: Wire.Wire,
                  generate_output_decoding_table=False):
+
+        """
+        Initializes a gate in a circuit.
+
+        :param gate_num_str:    str     The gate number represented as a string
+        :param gate:            dict    The gate information for the gate
+        :param inputs:          dict    The inputs of a gate
+        :param output:          dict    The outputs of a gate
+        :param generate_output_decoding_table:
+                                bool    Whether or not this is an output of a circuit
+                                        and needs an output decoding table
+        """
 
 
         self.gate = gate
@@ -52,18 +69,46 @@ class Gate:
 
 
 def AND():
+
+    """
+    Corresponds to the gate information for an AND gate.
+
+    :return:                    dict    The gate information for an AND gate
+    """
+
     return {(0, 0): 0, (0, 1): 0, (1, 0): 0, (1, 1): 1}
 
 
 def OR():
+
+    """
+    Corresponds to the gate information for an OR gate.
+
+    :return:                    dict    The gate information for an OR gate
+    """
+
     return {(0, 0): 0, (0, 1): 1, (1, 0): 1, (1, 1): 1}
 
 
 def XOR():
+
+    """
+    Corresponds to the gate information for an XOR gate.
+
+    :return:                    dict    The gate information for an XOR gate
+    """
+
     return {(0, 0): 0, (0, 1): 1, (1, 0): 1, (1, 1): 0}
 
 
 def NOT():
+
+    """
+    Corresponds to the gate information for an NOT gate.
+
+    :return:                    dict    The gate information for an NOT gate
+    """
+
     return {(0,): 1, (1,): 0}
 
 

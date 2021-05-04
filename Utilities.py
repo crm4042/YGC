@@ -7,12 +7,27 @@ ENCODING = nacl.encoding.RawEncoder()
 
 
 def to_bin_of_size(x, n):
+
+    """
+    Converts an integer to a binary value of a certain size
+
+    :param x:                   int     The integer value
+    :param n:                   int     The size
+    :return:
+    """
+
     bin_x = bin(x)[2:]
     return ("0"*(n-len(bin_x)))+bin_x
 
 def square_multiply(b, p, n):
+
     """
     Does b^p (mod n) efficiently
+
+    :param b:                   int     The base of the exponentiation
+    :param p:                   int     The power of the exponentiation
+    :param n:                   int     The modulus of the exponentiation
+    :return:                    int     The resulting exponentiation
     """
 
     result = 1
@@ -27,6 +42,15 @@ def square_multiply(b, p, n):
 
 
 def euclidean(x1, x2):
+
+    """
+    Finds the gcd between two integers.
+
+    :param x1:                  int     The first integer to find the GCD of
+    :param x2:                  int     The second integer to find the GCD of
+    :return:                    int     The GCD between the two integers
+    """
+
     if x1 > x2:
         a = x1
         b = x2
@@ -47,6 +71,17 @@ def euclidean(x1, x2):
     return b
 
 def extended_euclidean(x1, x2, check=False, verbose=False):
+
+    """
+    Performs the EEA to find the inverse of two integers
+
+    :param x1:                  int     The first integer to perform the EEA with
+    :param x2:                  int     The second integer to perform the EEA with
+    :param check:               bool    Debugging parameter for checking the result
+    :param verbose:             bool    Debugging parameter for verbose printing
+    :return:                    list    A linear combination of x1 and x2 that equals 1
+    """
+
     if x1 > x2:
         a = [x1]
         b = [x2]
@@ -91,12 +126,29 @@ def extended_euclidean(x1, x2, check=False, verbose=False):
     return u, x, v, y
 
 def inverse(x, n):
+
+    """
+    Gets the inverse of a number with respect to a modulus
+
+    :param x:                   int     The number to get the inverse of
+    :param n:                   int     The number to get the modulus with respect to
+    :return:                    int     The inverse of x mod n
+    """
+
     if x == 1:
         return 1
     scale1, num_1, scale2, num_2 = extended_euclidean(x, n)
     return scale1 % n if num_1 == x else scale2 % n
 
 def hash(message):
+
+    """
+    Hashes a single message
+
+    :param message:             int/str The message to hash
+    :return:                    bytes   The hashed message
+    """
+
     if isinstance(message, str):
         return nacl.hash.sha512(bytes(message, 'utf-8'), ENCODING)
     elif isinstance(message, int):

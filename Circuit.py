@@ -6,14 +6,39 @@ import random
 
 class Circuit:
     def __init__(self, inputs: dict, gates: list, wires: list):
+
+        """
+        Initializes the circuit
+
+        :param inputs:      dict        The inputs to the circuit
+        :param gates:       list        An ordered list of gates
+        :param wires:       list        An ordered list of wires
+        """
+
         self.inputs = inputs
         self.gates = gates
         self.wires = wires
 
     def get_wire_corresponding_to(self, num, activation):
+
+        """
+        Gets the wire corresponding to a certain wire number and activation
+
+        :param num:         int         The wire number to get
+        :param activation:  int         The activation to get
+        :return:            tuple       The corresponding wire
+        """
+
         return self.wires[num].k[activation], self.wires[num].p[activation]
 
     def print_circuit(self):
+
+        """
+        Prints all circuit information for debugging
+
+        :return:            None
+        """
+
         print("INPUTS:")
         for ipt in self.inputs.keys():
             print(ipt, self.inputs[ipt])

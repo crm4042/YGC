@@ -16,7 +16,27 @@ HOST = "127.0.0.1"
 
 
 class YGC_Circuit_Generator:
+
+    """
+    The circuit generator in the YGC protocol
+    """
+
     def __init__(self, host, port, partner_host, partner_port, circuit, prime, generator, uniform1, uniform2):
+
+        """
+        Initializes the sender protocol of the YGC
+
+        :param host:            str     The host name
+        :param port:            int     The port number
+        :param partner_host:    str     The host name of the partner
+        :param partner_port:    int     The port number of the partner
+        :param circuit:         Circuit The circuit to be evaluated
+        :param prime:           int     A prime
+        :param generator:       int     A generator for the prime
+        :param uniform1:        int     A uniform number
+        :param uniform2:        int     A uniform number
+        """
+
         # Network information
         self.host = host
         self.port = port
@@ -44,6 +64,13 @@ class YGC_Circuit_Generator:
             self.node.close()
 
     def protocol(self):
+
+        """
+        The protocol corresponding to the sender's side of YGC.
+
+        :return:                list    The evaluated circuit
+        """
+
         # Aggregates the circuit into a sendable format
         aggregate_garbled_table = list()
         aggregate_output_decoding_table = list()
@@ -91,7 +118,27 @@ class YGC_Circuit_Generator:
 
 
 class YGC_Circuit_Evaluator:
+
+    """
+    The circuit evaluator in the YGC protocol
+    """
+
     def __init__(self, host, port, partner_host, partner_port, inputs, prime, generator, uniform1, uniform2):
+
+        """
+        Initializes the evaluator's protocol for the YGC.
+
+        :param host:            str     The host name
+        :param port:            int     The port number
+        :param partner_host:    str     The host name of the partner
+        :param partner_port:    int     The port number of the partner
+        :param inputs:          dict    The inputs for the evaluator
+        :param prime:           int     A prime
+        :param generator:       int     A generator for the prime
+        :param uniform1:        int     A uniform number
+        :param uniform2:        int     A uniform number
+        """
+
         # Network information
         self.host = host
         self.port = port
@@ -121,6 +168,12 @@ class YGC_Circuit_Evaluator:
             self.node.close()
 
     def protocol(self):
+
+        """
+        The protocol for the YGC evaluator
+
+        :return:                dict        The outputs of the circuit
+        """
 
         # Receives the garbled table
         garbled_table, output_decoding_table, gate_possible_inputs, inputs = self.node.get_message_at(self.round_num)
@@ -227,6 +280,18 @@ class YGC_Circuit_Evaluator:
 
 def initialize_adder(party_num, prime, generator, uniform1, uniform2, inputs):
 
+    """
+    Initializes the protocol for the adder's circuit
+
+    :param party_num:           int         The party number
+    :param prime:               int         The corresponding prime
+    :param generator:           int         The generator for the prime
+    :param uniform1:            int         A random uniform number
+    :param uniform2:            int         A random uniform number
+    :param inputs:              dict        The inputs of both parties
+    :return:                    None
+    """
+
     inputs_copy = copy.copy(inputs)
 
     # The Circuit generator
@@ -261,6 +326,18 @@ def initialize_adder(party_num, prime, generator, uniform1, uniform2, inputs):
 
 
 def initialize_comparator(party_num, prime, generator, uniform1, uniform2, inputs):
+
+    """
+    Initializes the protocol for the comparator's circuit
+
+    :param party_num:           int         The party number
+    :param prime:               int         The corresponding prime
+    :param generator:           int         The generator for the prime
+    :param uniform1:            int         A random uniform number
+    :param uniform2:            int         A random uniform number
+    :param inputs:              dict        The inputs of both parties
+    :return:                    None
+    """
 
     bits = 2
 

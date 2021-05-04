@@ -93,7 +93,7 @@ class Node:
 	def listen(self):
 		
 		"""
-		Listens for the 
+		Listens for incoming communications
 		"""
 
 		while not self.stop:
@@ -118,12 +118,26 @@ class Node:
 		self.socket_server.close()
 
 	def close(self):
+
+		"""
+		Closes a node's sockets
+		:return: 				None
+		"""
+
 		self.stop = True
 		time.sleep(3)
 		while self.listener.isAlive():
 			pass
 
 	def send_messages(self, message_dict):
+
+		"""
+		Sends a set of messages
+
+		:param message_dict: 	dict	The messages to send in the form {addr: msg}
+		:return: 				None
+		"""
+
 		for addr in message_dict.keys():
 			if addr == (self.host, self.port):
 				if message_dict[addr] != None:
@@ -132,6 +146,14 @@ class Node:
 				self.socket_clients[addr].sendall(bytes(json.dumps(message_dict[addr]), encoding='utf-8'))
 
 	def get_message_at(self, index):
+
+		"""
+		Gets the message at a certain index in the message list
+
+		:param index: 			int		The index to get the message at
+		:return: 						The message at the index
+		"""
+
 		while len(self.message_list) < index+1:
 			pass
 		return self.message_list[index]
@@ -142,6 +164,14 @@ HOST = "127.0.0.1"
 START_PORT = 9095
 
 def init_node(party_num):
+
+	"""
+	Initializes two nodes for testing
+
+	:param party_num: 			int		The number of the node to initialize
+	:return: 					None
+	"""
+
 	addr_list = [(HOST, START_PORT + party) for party in range(NUM_PARTIES)]
 	node = Node(addr_list[party_num][0], addr_list[party_num][1])
 	try:

@@ -25,6 +25,22 @@ class OT_Sender:
     """
 
     def __init__(self, host, port, partner_host, partner_port, prime, generator, uniform1, uniform2, secret1, secret2):
+
+        """
+        Initializes the OT sender's protocol
+
+        :param host:            str     The host name
+        :param port:            int     The port number
+        :param partner_host:    str     The partner's host name
+        :param partner_port:    int     The partner's port number
+        :param prime:           int     A prime
+        :param generator:       int     A generator for the prime
+        :param uniform1:        int     An integer from a uniform distribution
+        :param uniform2:        int     An integer from a uniform distribution
+        :param secret1:         int     The first secret
+        :param secret2:         int     The second secret
+        """
+
         self.node = Node.Node(host, port)
         self.node.connect([(partner_host, partner_port)])
         self.addr = (host, port)
@@ -37,6 +53,12 @@ class OT_Sender:
         self.secret2 = secret2
 
     def protocol(self):
+
+        """
+        The protocol for the OT sender
+
+        :return:                None
+        """
 
         try:
             # print("x1: " + str(self.uniform1))
@@ -96,6 +118,20 @@ class OT_Receiver:
     """
 
     def __init__(self, host, port, partner_host, partner_port, prime, generator, uniform1, uniform2, choice):
+
+        """
+        Initializes the OT sender's protocol
+
+        :param host:            str     The host name
+        :param port:            int     The port number
+        :param partner_host:    str     The partner's host name
+        :param partner_port:    int     The partner's port number
+        :param prime:           int     A prime
+        :param generator:       int     A generator for the prime
+        :param uniform1:        int     An integer from a uniform distribution
+        :param uniform2:        int     An integer from a uniform distribution
+        """
+
         self.node = Node.Node(host, port)
         self.node.connect([(partner_host, partner_port)])
         self.addr = (host, port)
@@ -107,6 +143,13 @@ class OT_Receiver:
         self.choice = choice
 
     def protocol(self):
+
+        """
+        The protocol for the the receiver of the OT
+
+        :return:                int     The corresponding value
+        """
+
         try:
             # print("x1: "+str(self.uniform1))
             # print("x2: "+str(self.uniform2))
@@ -161,6 +204,21 @@ class OT_Receiver:
 
 
 def initialize_parties(party, prime, generator, uniform1, uniform2, secret1, secret2, choice):
+
+    """
+    Initializes the parties in OT. Thi is for testing.
+
+    :param party:               int     The party number
+    :param prime:               int     A prime
+    :param generator:           int     A generator for the prime
+    :param uniform1:            int     A number from a uniform distribution
+    :param uniform2:            int     A number from a uniform distribution
+    :param secret1:             int     The first secret
+    :param secret2:             int     The second secret
+    :param choice:              int     The desired choice
+    :return:
+    """
+
     if party == 0:
         p = OT_Sender(HOST, PORT, HOST, PORT+1, prime, generator, uniform1, uniform2, secret1, secret2)
         p.protocol()
